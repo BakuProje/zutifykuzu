@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+@layer base {
+:root {
+--background: #050505;
+--foreground: #ffffff;
+--primary: #FA243C;
+--primary-glow: rgba(250, 36, 60, 0.4);
+--secondary: #FA243C;
+--surface: #121212;
+--surface-hover: #1e1e1e;
+--glass: rgba(255, 255, 255, 0.05);
+--glass-border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+background-color: var(--background);
+color: var(--foreground);
+font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+-webkit-font-smoothing: antialiased;
+selection-background-color: var(--primary);
+}
+}
+
+@layer utilities {
+.no-scrollbar::-webkit-scrollbar {
+display: none;
+}
+
+.no-scrollbar {
+-ms-overflow-style: none;
+scrollbar-width: none;
+}
+
+.glass {
+background: var(--glass);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border: 1px solid var(--glass-border);
+}
+
+.glass-dark {
+background: rgba(0, 0, 0, 0.4);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.text-glow {
+text-shadow: 0 0 20px var(--primary-glow);
+}
+
+.premium-shadow {
+box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes marquee {
+0% {
+transform: translateX(0);
+}
+
+100% {
+transform: translateX(calc(-50% - 1rem));
+}
+}
+
+.animate-marquee {
+animation: marquee 15s linear infinite;
+}
+}
+
+/* Custom Scrollbar for desktop */
+::-webkit-scrollbar {
+width: 6px;
+height: 6px;
+}
+
+::-webkit-scrollbar-track {
+background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+background: rgba(255, 255, 255, 0.1);
+border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+background: rgba(255, 255, 255, 0.2);
+}
+
+/* Karaoke timed lyrics styles */
+.lyric-line {
+  color: rgba(255, 255, 255, 0.3);
+  transition: color 0.25s ease, opacity 0.3s ease;
+}
+
+.lyric-line.passed {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.lyric-line.active {
+  color: #ffffff;
+}
+
+/* Timed word-by-word styling */
+.lyric-word {
+  color: rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
+  transition: color 0.25s ease-in-out;
+}
+
+.lyric-line.passed .lyric-word {
+  color: rgba(255, 255, 255, 0.3) !important;
+  background-image: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+}
+
+.lyric-line.active-karaoke {
+  /* Clean active line container */
+}
+
+.lyric-line.active-karaoke .lyric-word {
+  color: rgba(255, 255, 255, 0.3);
+}

@@ -1,0 +1,432 @@
+{
+  "type": "playlist",
+  "name": "DJ GACOR",
+  "uri": "spotify:playlist:1iBiMk25qvTly59gHs5ca0",
+  "id": "1iBiMk25qvTly59gHs5ca0",
+  "title": "DJ GACOR",
+  "subtitle": "Baku !!!",
+  "authors": null,
+  "coverArt": {
+    "sources": [
+      {
+        "height": null,
+        "width": null,
+        "url": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84ab08a20eeaceeeec3165aa49"
+      }
+    ]
+  },
+  "releaseDate": null,
+  "duration": 0,
+  "isPlayable": true,
+  "playabilityReason": "UNKNOWN",
+  "isExplicit": false,
+  "hasVideo": false,
+  "relatedEntityUri": "spotify:playlist:1iBiMk25qvTly59gHs5ca0",
+  "trackList": [
+    {
+      "uri": "spotify:track:3c3JC5TjFrEqEKheU7227c",
+      "uid": "3ab4b0d928b05f59",
+      "title": "Ngga Dulu",
+      "subtitle": "Akbar Chalay, Zynakal, ciloqciliq",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 189004,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/4b97b14ff92c28dfd0a0fd37a6e59abed54458d1"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:64aGIcMIA3hlMNfnnSxaTC",
+      "uid": "e02cda337594e528",
+      "title": "DJ SO ASU - Pelukan Yang Hangat",
+      "subtitle": "DJ Xen",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 286511,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/2c559369a460ab2d90aa043540d567322d87a1ff"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:6vuiyEPhToRctSLP5T7oMb",
+      "uid": "a96a36de04d5bb05",
+      "title": "Sa Ceritakan Pada Bintang",
+      "subtitle": "Vel Remixer",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 238746,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/3b99d75f6734feab24ed686a33b228d79b2d59ba"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:3tY0ptWi1ZRcFQlShjeZtX",
+      "uid": "ed29d22242fca10d",
+      "title": "DJ SEDIA AKU SEBELUM HUJAN MANGKECE",
+      "subtitle": "Dj Rasa Remix",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 195072,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/aab60ae739581413a6ab2da52ee08dd1eab2f154"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:42GueQyFCw3yfxuoVSJlM1",
+      "uid": "dfa47705e4667a1e",
+      "title": "Dora Dora - Breakbeat",
+      "subtitle": "Ellan Fvnky",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 374270,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/d1e9642f020cc2e1554838ff1f5c31960fa2dcda"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:1tIcI9YhRAQR1MfdEUmP6D",
+      "uid": "48adc5b816899356",
+      "title": "BEBEHACE",
+      "subtitle": "Lyn Trmaker, Refan Fvnky",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 138432,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/fffdcd4538c86a91ff716264d93184b9aa517e58"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:507qEKmmviNC71ocMed57a",
+      "uid": "3ee002a9e2d44f94",
+      "title": "Easy Fave",
+      "subtitle": "Adry WG",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 144288,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/c02fe8a1522db8e978fb09d0ff68379be4623ff1"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:7kU81dBmSMTdMHdlfwaBgf",
+      "uid": "510b6c3376aecf2f",
+      "title": "CYBERDREAM (BKB)",
+      "subtitle": "OSSHE 17",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 221240,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/5e683c3f072f4a8e2f0f6e0b2556138764c35a6d"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:2i5n3ozDuwzSWYLkuuXWu6",
+      "uid": "7825edb441718733",
+      "title": "yes",
+      "subtitle": "MARIA FENOMENA",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 96469,
+      "isPlayable": false,
+      "playabilityReason": "COUNTRY_RESTRICTED",
+      "audioPreview": null,
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:08XRQFe5YSRfxSO18tmf9Y",
+      "uid": "e1a9053ec96b4c25",
+      "title": "Only You",
+      "subtitle": "Driv Beispiel Gix",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 184520,
+      "isPlayable": false,
+      "playabilityReason": "COUNTRY_RESTRICTED",
+      "audioPreview": null,
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:3nC7Ra9hy9rxPP4ltYrIZ7",
+      "uid": "e5260d224dcba755",
+      "title": "JUST_FUN",
+      "subtitle": "TRUTON ONLY",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 245988,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/4638e3fd6dd3b5364d7518afb59bdf64055b70f8"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:2qISM3dWmPRP8uWlwLOXBE",
+      "uid": "6c8092ab2bdc03d9",
+      "title": "the same instinct",
+      "subtitle": "BELLA DE LIMA",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 92458,
+      "isPlayable": false,
+      "playabilityReason": "COUNTRY_RESTRICTED",
+      "audioPreview": null,
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:37BclOmNFOyS1uMBB2KoJo",
+      "uid": "d813eb0be94efbb9",
+      "title": "Cant Back To You",
+      "subtitle": "Warni Suhakimi",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 188364,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/ec4b292ba2354704cf781841dd47f100f2a5d1df"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:17AWuqr9ljpd4JXtwR5HUz",
+      "uid": "5359432cf59e942d",
+      "title": "CLBK",
+      "subtitle": "Putune Makni",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 234997,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/6ed66a585d67cd13a0e0aab95cf0db4136e4d90a"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:7vg9noSnFEyPfwLiaCW4vi",
+      "uid": "332f7c23f1ccb2b8",
+      "title": "NO BATIDÃO",
+      "subtitle": "ZXKAI, slxughter",
+      "isExplicit": true,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": [
+          "EXPLICIT"
+        ]
+      },
+      "duration": 89745,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/5d7f5f86f118f2798a3c76845458cd89ff6dbfda"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:4D6LRN9a7ypOrzfVfECpdg",
+      "uid": "9e4931ca78fa8dff",
+      "title": "Keong Racun",
+      "subtitle": "Tika & Tresna",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 310674,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/b5905234e8fd7229c26aabf658c21f7ec5d1b337"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:4VWbZBOEFWSiYgiekhlnsY",
+      "uid": "7808a94477516fc2",
+      "title": "Body Pata Pata",
+      "subtitle": "Faris Adam, Diva Aurel",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 269108,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/c71a8ea31372961da93480ec4202586a1bb24d02"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:5r0HarzD09ASlmP58XTdLF",
+      "uid": "2de0c1504ea8a014",
+      "title": "Bass Boxing",
+      "subtitle": "Nata HG",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 256496,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/694dea90b958669c7f5f1274b6049bcdecde87b2"
+      },
+      "entityType": "track"
+    },
+    {
+      "uri": "spotify:track:6A4mOb7RYV4xnvnItHwUFj",
+      "uid": "663bdf428fb9735f",
+      "title": "PREMAN X KICAU 2026",
+      "subtitle": "ROSE DEJADYANN,SHALEAS",
+      "isExplicit": false,
+      "isNineteenPlus": false,
+      "contentRatings": {
+        "labels": []
+      },
+      "duration": 101653,
+      "isPlayable": true,
+      "playabilityReason": "PLAYABLE",
+      "audioPreview": {
+        "format": "MP3_96",
+        "url": "https://p.scdn.co/mp3-preview/58e9ffe5d8c0b3678843d2640548df5eb0778904"
+      },
+      "entityType": "track"
+    }
+  ],
+  "visualIdentity": {
+    "backgroundBase": {
+      "alpha": 255,
+      "blue": 65,
+      "green": 45,
+      "red": 144
+    },
+    "backgroundTintedBase": {
+      "alpha": 255,
+      "blue": 28,
+      "green": 0,
+      "red": 96
+    },
+    "textBase": {
+      "alpha": 255,
+      "blue": 255,
+      "green": 255,
+      "red": 255
+    },
+    "textBrightAccent": {
+      "alpha": 255,
+      "blue": 255,
+      "green": 255,
+      "red": 255
+    },
+    "textSubdued": {
+      "alpha": 255,
+      "blue": 196,
+      "green": 188,
+      "red": 255
+    },
+    "image": [
+      {
+        "url": "https://image-cdn-ak.spotifycdn.com/image/ab67706c00006c11ab08a20eeaceeeec3165aa49",
+        "maxHeight": 64,
+        "maxWidth": 64
+      },
+      {
+        "url": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000bebbab08a20eeaceeeec3165aa49",
+        "maxHeight": 640,
+        "maxWidth": 640
+      },
+      {
+        "url": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84ab08a20eeaceeeec3165aa49",
+        "maxHeight": 300,
+        "maxWidth": 300
+      }
+    ]
+  },
+  "attributes": [],
+  "format": ""
+}
