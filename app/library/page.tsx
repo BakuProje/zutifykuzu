@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation';
 import { db, SubscribedArtist, SavedAlbum } from '@/lib/db';
 import { Track } from '@/lib/store';
 import { TrackItem } from '@/components/TrackItem';
-import { Heart, Plus, ListMusic, Trash2, Play, MoreVertical, Download, TrendingUp, Clock, UploadCloud, Check } from 'lucide-react';
+import { Heart, Plus, ListMusic, Trash2, Play, MoreVertical, Download, TrendingUp, Clock, UploadCloud, Check, Pin } from 'lucide-react';
 import Image from 'next/image';
 import { usePlayerStore } from '@/lib/store';
 import { motion, AnimatePresence } from 'motion/react';
 import { MarqueeText } from '@/components/MarqueeText';
-import { getHighResImage } from '@/lib/utils';
+import { cn, getHighResImage } from '@/lib/utils';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 
 export default function Library() {
@@ -20,6 +20,7 @@ export default function Library() {
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [savedAlbums, setSavedAlbums] = useState<SavedAlbum[]>([]);
   const [subscribedArtists, setSubscribedArtists] = useState<SubscribedArtist[]>([]);
+  const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState('Daftar putar');
 
   const [showCreate, setShowCreate] = useState(false);
@@ -57,6 +58,10 @@ export default function Library() {
     setSubscribedArtists(sa);
     setSavedAlbums(albums);
     setUploadedSongs(uploaded);
+
+    // Load pinned playlist IDs
+    const pinned = await db.getPinnedPlaylists();
+    setPinnedIds(new Set(pinned.map(p => p.playlistId)));
   };
 
   useEffect(() => {
@@ -249,24 +254,34 @@ export default function Library() {
   };
 
   return (
-    <main className="min-h-screen pt-6 px-4 pb-24 bg-[#050505]">
+    <motion.main 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
+      className="min-h-screen pt-6 px-4 pb-24 bg-[#050505]"
+    >
       <div className="flex overflow-x-auto no-scrollbar gap-3 mb-6 snap-x snap-mandatory scroll-smooth">
         {tabs.map((tab) => (
           <motion.button
             key={tab}
-            initial={{ opacity: 0.5, scale: 0.9, x: 20 }}
-            whileInView={{ opacity: 1, scale: 1, x: 0 }}
-            viewport={{ once: false, amount: 0.4 }}
-            transition={{ duration: 0.5, type: "spring", bounce: 0.4 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setActiveTab(tab)}
-            className={`whitespace-nowrap px-5 py-2 rounded-full text-sm font-medium transition-colors border snap-center ${activeTab === tab
-                ? 'bg-[#FA243C] text-white border-[#FA243C]'
-                : 'bg-transparent text-white/70 border-white/10 hover:bg-white/5'
-              }`}
+            className="relative whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-semibold transition-colors snap-center outline-none"
           >
-            {tab}
+            {activeTab === tab && (
+              <motion.div
+                layoutId="activeLibraryTab"
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                className="absolute inset-0 bg-[#FA243C] rounded-full shadow-lg shadow-[#FA243C]/20"
+              />
+            )}
+            <span className={cn(
+              "relative z-10 transition-colors duration-300",
+              activeTab === tab ? "text-white" : "text-white/60 hover:text-white"
+            )}>
+              {tab}
+            </span>
           </motion.button>
         ))}
       </div>
@@ -342,15 +357,46 @@ export default function Library() {
                 <MarqueeText text={pl.name} className="text-white font-medium" />
                 <p className="text-white/50 text-sm">{pl.tracks.length} lagu</p>
               </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  db.deletePlaylist(pl.id).then(loadLibrary);
-                }}
-                className="p-2 text-white/50 hover:text-red-500 transition-all"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const isPinned = pinnedIds.has(pl.id);
+                    if (isPinned) {
+                      db.removePinnedPlaylist(pl.id).then(() => {
+                        const newSet = new Set(pinnedIds);
+                        newSet.delete(pl.id);
+                        setPinnedIds(newSet);
+                        showToast('Playlist dicopot dari Beranda');
+                      });
+                    } else {
+                      db.addPinnedPlaylist(pl.id).then(() => {
+                        const newSet = new Set(pinnedIds);
+                        newSet.add(pl.id);
+                        setPinnedIds(newSet);
+                        showToast('Playlist disematkan di Beranda');
+                      });
+                    }
+                  }}
+                  className={`p-2 transition-all ${
+                    pinnedIds.has(pl.id) 
+                      ? 'text-[#FA243C] hover:text-[#FA243C]/70' 
+                      : 'text-white/30 hover:text-white/60'
+                  }`}
+                  title={pinnedIds.has(pl.id) ? 'Copot dari Beranda' : 'Sematkan di Beranda'}
+                >
+                  <Pin className={`w-4 h-4 ${pinnedIds.has(pl.id) ? 'fill-current' : ''}`} />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    db.deletePlaylist(pl.id).then(loadLibrary);
+                  }}
+                  className="p-2 text-white/50 hover:text-red-500 transition-all"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -727,6 +773,6 @@ export default function Library() {
           </div>
         )}
       </AnimatePresence>
-    </main>
+    </motion.main>
   );
 }

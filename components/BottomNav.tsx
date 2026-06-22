@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Home, Search, Library } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useHasMounted } from '@/hooks/useHasMounted';
+import { motion } from 'motion/react';
 
 export function BottomNav() {
   const pathname = usePathname();
@@ -29,18 +30,27 @@ export function BottomNav() {
               key={item.name}
               href={item.href}
               prefetch={true}
-              className="flex flex-col items-center justify-center flex-1 transition-all duration-200"
+              className="flex flex-col items-center justify-center flex-1 transition-all duration-200 outline-none"
             >
               {/* Icon Wrapper Pill */}
-              <div className={cn(
-                "w-16 h-8 rounded-full flex items-center justify-center transition-all duration-300 mb-1",
-                isActive ? "bg-[#FA243C] text-white shadow-lg shadow-[#FA243C]/20" : "text-white/50 hover:text-white"
-              )}>
-                {item.icon ? (
-                  <item.icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
-                ) : (
-                  <img src="/zutify.png" className="w-5 h-5 object-contain" alt="ZUTIFY" />
+              <div className="relative w-16 h-8 flex items-center justify-center mb-1">
+                {isActive && (
+                  <motion.div
+                    layoutId="activeTab"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    className="absolute inset-0 bg-[#FA243C] rounded-full shadow-lg shadow-[#FA243C]/20"
+                  />
                 )}
+                <span className={cn(
+                  "relative z-10 transition-colors duration-300",
+                  isActive ? "text-white" : "text-white/50 hover:text-white"
+                )}>
+                  {item.icon ? (
+                    <item.icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
+                  ) : (
+                    <img src="/zutify.png" className="w-5 h-5 object-contain" alt="ZUTIFY" />
+                  )}
+                </span>
               </div>
               {/* Label Text */}
               <span className={cn(

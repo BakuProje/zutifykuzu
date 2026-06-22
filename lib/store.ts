@@ -14,7 +14,6 @@ export interface HomeData {
   heroTracks: Track[];
   speedDialTracks: Track[];
   quickPicksTracks: Track[];
-  communityPlaylists: any[];
   artists: any[];
   categories: { key: string; title: string; type: 'song' | 'mixed'; items: any[] }[];
   timestamp: number;

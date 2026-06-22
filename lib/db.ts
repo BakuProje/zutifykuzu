@@ -21,6 +21,11 @@ export interface RecentSearch {
   timestamp: number;
 }
 
+export interface PinnedPlaylist {
+  playlistId: string;
+  pinnedAt: number;
+}
+
 interface SannMusicDB extends DBSchema {
   playlists: {
     key: string;
@@ -55,12 +60,16 @@ interface SannMusicDB extends DBSchema {
     key: string;
     value: RecentSearch;
   };
+  pinned_playlists: {
+    key: string;
+    value: PinnedPlaylist;
+  };
 }
 
 let dbPromise: Promise<IDBPDatabase<SannMusicDB>>;
 
 if (typeof window !== 'undefined') {
-  dbPromise = openDB<SannMusicDB>('SannMusicDB', 5, {
+  dbPromise = openDB<SannMusicDB>('SannMusicDB', 6, {
     upgrade(db, oldVersion, newVersion, transaction) {
       if (!db.objectStoreNames.contains('playlists')) {
         db.createObjectStore('playlists', { keyPath: 'id' });
@@ -82,6 +91,9 @@ if (typeof window !== 'undefined') {
       }
       if (!db.objectStoreNames.contains('recent_searches')) {
         db.createObjectStore('recent_searches', { keyPath: 'query' });
+      }
+      if (!db.objectStoreNames.contains('pinned_playlists')) {
+        db.createObjectStore('pinned_playlists', { keyPath: 'playlistId' });
       }
     },
   });
@@ -220,5 +232,25 @@ export const db = {
     const db = await dbPromise;
     const song = await db.get('downloaded_songs', videoId);
     return !!song;
+  },
+  async getPinnedPlaylists() {
+    const db = await dbPromise;
+    const pinned = await db.getAll('pinned_playlists');
+    return pinned.sort((a, b) => b.pinnedAt - a.pinnedAt);
+  },
+  async addPinnedPlaylist(playlistId: string) {
+    const db = await dbPromise;
+    return db.put('pinned_playlists', { playlistId, pinnedAt: Date.now() });
+  },
+  async removePinnedPlaylist(playlistId: string) {
+    if (!playlistId) return;
+    const db = await dbPromise;
+    return db.delete('pinned_playlists', playlistId);
+  },
+  async isPinned(playlistId: string) {
+    if (!playlistId) return false;
+    const db = await dbPromise;
+    const pinned = await db.get('pinned_playlists', playlistId);
+    return !!pinned;
   },
 };

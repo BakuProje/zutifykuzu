@@ -6,10 +6,10 @@ import { Loader2, History, Cast, User, Play, MoreVertical } from 'lucide-react';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { HorizontalScroll } from '@/components/HorizontalScroll';
 import { MixedScroll } from '@/components/MixedScroll';
-import { CommunityPlaylistCard } from '@/components/CommunityPlaylistCard';
 import { MarqueeText } from '@/components/MarqueeText';
-import { getHighResImage, getBestThumbnail } from '@/lib/utils';
-import { motion } from 'motion/react';
+import { cn, getHighResImage, getBestThumbnail } from '@/lib/utils';
+import { db } from '@/lib/db';
+import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 
 import { HomeSkeleton } from '@/components/HomeSkeleton';
@@ -35,8 +35,8 @@ export default function Home() {
   const [heroTracks, setHeroTracks] = useState<Track[]>(homeData?.heroTracks || []);
   const [speedDialTracks, setSpeedDialTracks] = useState<Track[]>(homeData?.speedDialTracks || []);
   const [quickPicksTracks, setQuickPicksTracks] = useState<Track[]>(homeData?.quickPicksTracks || []);
-  const [communityPlaylists, setCommunityPlaylists] = useState<any[]>(homeData?.communityPlaylists || []);
   const [artists, setArtists] = useState<any[]>(homeData?.artists || []);
+  const [pinnedPlaylists, setPinnedPlaylists] = useState<any[]>([]);
   const [categories, setCategories] = useState<{ key: string; title: string; type: 'song' | 'mixed'; items: any[] }[]>(homeData?.categories || []);
   const [loading, setLoading] = useState(!homeData);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
@@ -50,8 +50,8 @@ export default function Home() {
   const dragHero = useDraggableScroll<HTMLDivElement>({ autoScroll: true, autoScrollInterval: 4000 });
   const dragSpeedDial = useDraggableScroll<HTMLDivElement>({ autoScroll: true, autoScrollInterval: 3500 });
   const dragQuickPicks = useDraggableScroll<HTMLDivElement>({ autoScroll: true, autoScrollInterval: 4500 });
-  const dragCommunity = useDraggableScroll<HTMLDivElement>({ autoScroll: true, autoScrollInterval: 4000 });
   const dragArtists = useDraggableScroll<HTMLDivElement>({ autoScroll: true, autoScrollInterval: 3500 });
+  const dragPinned = useDraggableScroll<HTMLDivElement>({ autoScroll: false });
 
   useEffect(() => {
     if (!activeFilter) return;
@@ -82,11 +82,10 @@ export default function Home() {
   }, [activeFilter]);
 
   const fetchHomeData = async () => {
-    if (homeData && homeData.version === '1.8' && Date.now() - homeData.timestamp < 1000 * 60 * 60) {
+    if (homeData && homeData.version === '2.0' && Date.now() - homeData.timestamp < 1000 * 60 * 60) {
       setHeroTracks(shuffleArray(homeData.heroTracks || []));
       setSpeedDialTracks(homeData.speedDialTracks || []);
       setQuickPicksTracks(homeData.quickPicksTracks || []);
-      setCommunityPlaylists(homeData.communityPlaylists || []);
       setArtists(homeData.artists || []);
       setCategories(homeData.categories || []);
       setLoading(false);
@@ -98,7 +97,6 @@ export default function Home() {
       const mainQueries: { key: string; title?: string; q: string; type?: string }[] = [
         { key: 'speedDial', q: 'top trending hits 2025', type: 'song' },
         { key: 'quickPicks', q: 'chill lofi hip hop', type: 'all' },
-        { key: 'community', q: 'best chill playlists', type: 'playlist' },
       ];
 
       const catQueries = [
@@ -125,13 +123,6 @@ export default function Home() {
       let currentHeroTracks: Track[] = [];
       let currentSpeedDialTracks: Track[] = [];
       let currentQuickPicksTracks: Track[] = [];
-      let currentCommunityPlaylists: any[] = [
-        { playlistId: 'PLPFzKsPt50V8azAzY0Sg2go23AL9nuAAF' }, // songs to vibe to
-        { playlistId: 'PLyBxKXnR4L89zxuxXdrXdWvphJkctdPdi' }, // Top 50 Lagu Indie Indonesia
-        { playlistId: 'PLo3pNg0eiPc_JHZ-1jjCYbup7_rT3CBl8' }, // Late Night Songs Playlist
-        { playlistId: 'PL3EfCK9aCbkptFjtgWYJ8wiXgJQw5k3M3' }, // Best of Chill Nation
-        { playlistId: 'PLyORnIW1xT6z8za6mAQhjjzr_EQTq8qcY' }  // Best Indie Songs of 2026
-      ];
       let currentArtists: any[] = [];
       
       const orderMap = new Map(catQueries.map((c, i) => [c.key, i]));
@@ -184,20 +175,6 @@ export default function Home() {
           currentQuickPicksTracks = filterUsedTracks(filterShortTracks(uniqueData)).slice(0, 20); 
           setQuickPicksTracks(currentQuickPicksTracks); 
         }
-        else if (key === 'community') { 
-          const verifiedPlaylists = [
-            { playlistId: 'PLPFzKsPt50V8azAzY0Sg2go23AL9nuAAF' }, // songs to vibe to
-            { playlistId: 'PLyBxKXnR4L89zxuxXdrXdWvphJkctdPdi' }, // Top 50 Lagu Indie Indonesia
-            { playlistId: 'PLo3pNg0eiPc_JHZ-1jjCYbup7_rT3CBl8' }, // Late Night Songs Playlist
-            { playlistId: 'PL3EfCK9aCbkptFjtgWYJ8wiXgJQw5k3M3' }, // Best of Chill Nation
-            { playlistId: 'PLyORnIW1xT6z8za6mAQhjjzr_EQTq8qcY' }  // Best Indie Songs of 2026
-          ];
-          const otherPlaylists = uniqueData.filter((p: any) => 
-            p.playlistId && !verifiedPlaylists.some(vp => vp.playlistId === p.playlistId)
-          );
-          currentCommunityPlaylists = [...verifiedPlaylists, ...otherPlaylists].slice(0, 10);
-          setCommunityPlaylists(currentCommunityPlaylists); 
-        }
         else if (key === 'artists') { 
           currentArtists = uniqueData.slice(0, 10); 
           setArtists(currentArtists); 
@@ -224,11 +201,10 @@ export default function Home() {
           heroTracks: currentHeroTracks,
           speedDialTracks: currentSpeedDialTracks,
           quickPicksTracks: currentQuickPicksTracks,
-          communityPlaylists: currentCommunityPlaylists,
           artists: currentArtists,
           categories: currentCats,
           timestamp: Date.now(),
-          version: '1.8'
+          version: '2.0'
         });
 
       };
@@ -386,11 +362,10 @@ export default function Home() {
         heroTracks: currentHeroTracks,
         speedDialTracks: currentSpeedDialTracks,
         quickPicksTracks: currentQuickPicksTracks,
-        communityPlaylists: currentCommunityPlaylists,
         artists: currentArtists,
         categories: currentCats,
         timestamp: Date.now(),
-        version: '1.6'
+        version: '2.0'
       });
       
       // Fetch speedDial next
@@ -415,7 +390,24 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (hasMounted) fetchHomeData();
+    if (hasMounted) {
+      fetchHomeData();
+      // Load pinned playlists from IndexedDB
+      const loadPinned = async () => {
+        try {
+          const pinned = await db.getPinnedPlaylists();
+          const playlistData = [];
+          for (const pin of pinned) {
+            const pl = await db.getPlaylist(pin.playlistId);
+            if (pl) playlistData.push(pl);
+          }
+          setPinnedPlaylists(playlistData);
+        } catch (e) {
+          console.error('Failed to load pinned playlists:', e);
+        }
+      };
+      loadPinned();
+    }
   }, [hasMounted]);
 
   if (!hasMounted || loading) {
@@ -432,7 +424,12 @@ export default function Home() {
 
 
   return (
-    <main className="min-h-screen pt-6 pb-32 bg-[#050505] selection:bg-[#FA243C]/30 overflow-x-hidden w-full">
+    <motion.main 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
+      className="min-h-screen pt-6 pb-32 bg-[#050505] selection:bg-[#FA243C]/30 overflow-x-hidden w-full"
+    >
       {/* Header */}
       <div className="flex items-center justify-between px-6 mb-8 sticky top-0 z-30 py-4 bg-[#050505]/90 backdrop-blur-xl border-b border-white/5">
         <h1 className="text-3xl font-extrabold text-white tracking-tight">Beranda</h1>
@@ -458,46 +455,79 @@ export default function Home() {
         className="flex overflow-x-auto no-scrollbar gap-2.5 px-6 mb-8 select-none"
       >
         {pills.map((pill) => (
-          <button 
+          <motion.button 
             key={pill} 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setActiveFilter(activeFilter === pill ? null : pill)}
-            className={`whitespace-nowrap px-5 py-2.5 rounded-full text-xs font-extrabold tracking-wide transition-all border-none ${
-              activeFilter === pill 
-                ? 'bg-[#FA243C] text-white shadow-lg shadow-[#FA243C]/20 scale-105' 
-                : 'bg-[#232323] hover:bg-[#2e2e2e] text-white/95'
-            }`}
+            className="relative whitespace-nowrap px-5 py-2.5 rounded-full text-xs font-extrabold tracking-wide transition-all border-none outline-none"
           >
-            {pill}
-          </button>
+            {activeFilter === pill && (
+              <motion.div
+                layoutId="activeFilterPill"
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                className="absolute inset-0 bg-[#FA243C] rounded-full shadow-lg shadow-[#FA243C]/20"
+              />
+            )}
+            <span className={cn(
+              "relative z-10 transition-colors duration-300",
+              activeFilter === pill ? "text-white" : "text-white/95"
+            )}>
+              {pill}
+            </span>
+          </motion.button>
         ))}
       </div>
 
-      {loading || (activeFilter && loadingFilter) ? (
-        <HomeSkeleton />
-      ) : activeFilter ? (
-        <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 px-2">
-          {filterData.map((cat, i) => (
-            <HorizontalScroll key={i} title={cat.title} tracks={cat.tracks} />
-          ))}
-          
-          <div className="px-6 mb-10">
-            <h2 className="text-xl font-bold text-white mb-6">Suasana Hati dan Genre</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-              {pills.slice(0, 12).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => setActiveFilter(p)}
-                  className="bg-white/5 hover:bg-white/10 text-white font-medium py-4 px-4 rounded-2xl text-center transition-all border border-white/5 group relative overflow-hidden"
-                >
-                  <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-white/10 to-transparent rounded-bl-full transform translate-x-2 -translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-300" />
-                  <span className="text-sm relative z-10">{p}</span>
-                </button>
-              ))}
+      <AnimatePresence mode="wait">
+        {loading || (activeFilter && loadingFilter) ? (
+          <motion.div
+            key="skeleton"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <HomeSkeleton />
+          </motion.div>
+        ) : activeFilter ? (
+          <motion.div
+            key="filter-results"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-12 px-2"
+          >
+            {filterData.map((cat, i) => (
+              <HorizontalScroll key={i} title={cat.title} tracks={cat.tracks} />
+            ))}
+            
+            <div className="px-6 mb-10">
+              <h2 className="text-xl font-bold text-white mb-6">Suasana Hati dan Genre</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                {pills.slice(0, 12).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setActiveFilter(p)}
+                    className="bg-white/5 hover:bg-white/10 text-white font-medium py-4 px-4 rounded-2xl text-center transition-all border border-white/5 group relative overflow-hidden"
+                  >
+                    <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-white/10 to-transparent rounded-bl-full transform translate-x-2 -translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-300" />
+                    <span className="text-sm relative z-10">{p}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-14 animate-in fade-in duration-1000">
+          </motion.div>
+        ) : (
+          <motion.div
+            key="home-content"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-14"
+          >
           {/* Hero Section */}
           {heroTracks.length > 0 && (
             <div 
@@ -540,6 +570,61 @@ export default function Home() {
                   </motion.div>
                 );
               })}
+            </div>
+          )}
+
+          {/* Pinned Playlists */}
+          {pinnedPlaylists.length > 0 && (
+            <div className="mb-10">
+              <div className="px-6 mb-4">
+                <h2 className="text-2xl font-black text-[#FA243C] tracking-tighter italic flex items-center gap-2">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg>
+                  Disematkan
+                </h2>
+                <p className="text-white/40 text-sm font-medium">Playlist yang kamu pin</p>
+              </div>
+              <div 
+                {...dragPinned}
+                className="flex overflow-x-auto no-scrollbar gap-5 px-6 pb-4 select-none"
+              >
+                {pinnedPlaylists.map((pl, i) => (
+                  <Link href={`/playlist/${pl.id}`} key={`pinned-${pl.id}-${i}`}>
+                    <motion.div
+                      initial={{ opacity: 0, y: 15 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: i * 0.08, ease: "easeOut" }}
+                      className="flex-none w-40 sm:w-44 cursor-pointer group"
+                    >
+                      <div className="relative aspect-square rounded-[1.75rem] overflow-hidden mb-3.5 shadow-xl group-hover:scale-[1.03] transition-all duration-500 ring-2 ring-[#FA243C]/20 group-hover:ring-[#FA243C]/40">
+                        <ImageWithFallback 
+                          src={pl.img || ''}
+                          alt={pl.name} 
+                          fill 
+                          sizes="(max-width: 640px) 160px, 176px" 
+                          className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out" 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                        <div className="absolute bottom-3 left-3 right-3">
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-7 h-7 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                              <Play className="w-3.5 h-3.5 text-white fill-current ml-0.5" />
+                            </div>
+                            <span className="text-white/80 text-[11px] font-bold">{pl.tracks?.length || 0} lagu</span>
+                          </div>
+                        </div>
+                        <div className="absolute top-3 right-3">
+                          <div className="w-6 h-6 bg-[#FA243C]/90 rounded-full flex items-center justify-center shadow-lg">
+                            <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg>
+                          </div>
+                        </div>
+                      </div>
+                      <MarqueeText text={pl.name} className="text-[15px] font-bold text-white tracking-tight leading-snug" />
+                      <p className="text-[13px] font-medium text-white/30 mt-0.5">Playlist</p>
+                    </motion.div>
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
 
@@ -649,23 +734,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* Community Playlists */}
-          {communityPlaylists.length > 0 && (
-            <div className="px-6">
-              <h2 className="text-2xl font-black text-[#81B29A] tracking-tighter mb-6 uppercase">From the community</h2>
-              <div 
-                {...dragCommunity}
-                className="flex overflow-x-auto no-scrollbar gap-6 pb-4 select-none"
-              >
-                {communityPlaylists.map((playlist, i) => {
-                  const id = playlist.playlistId;
-                  if (!id) return null;
-                  return <CommunityPlaylistCard key={`community-playlist-${id}-${i}`} playlistId={id} />;
-                })}
-              </div>
-            </div>
-          )}
-
           {/* Artists */}
           {artists.length > 0 && (
             <div className="mb-8">
@@ -713,8 +781,9 @@ export default function Home() {
               )
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
-    </main>
+      </AnimatePresence>
+    </motion.main>
   );
 }

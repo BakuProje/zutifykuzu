@@ -18,7 +18,12 @@ import { motion } from 'motion/react';
 
 export default function DeveloperPage() {
   return (
-    <main className="min-h-screen pb-24 flex flex-col items-center justify-center">
+    <motion.main 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.35 }}
+      className="min-h-screen pb-24 flex flex-col items-center justify-center"
+    >
       <div className="px-6 w-full max-w-lg">
 
         <motion.div
@@ -95,6 +100,6 @@ export default function DeveloperPage() {
           67% { border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; }
         }
       `}</style>
-    </main>
+    </motion.main>
   );
 }

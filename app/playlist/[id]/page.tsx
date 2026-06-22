@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { db } from '@/lib/db';
 import { usePlayerStore, Track } from '@/lib/store';
-import { Play, ArrowLeft, MoreHorizontal, Radio, Music, Trash2, BookmarkPlus, BookmarkCheck, Download, Search, Check } from 'lucide-react';
+import { Play, ArrowLeft, MoreHorizontal, Radio, Music, Trash2, BookmarkPlus, BookmarkCheck, Download, Search, Check, Edit2, Camera, X } from 'lucide-react';
 import { ImageWithFallback } from '@/components/ImageWithFallback';
 import { getHighResImage } from '@/lib/utils';
 import { TrackItem } from '@/components/TrackItem';
@@ -33,8 +33,82 @@ export default function PlaylistPage() {
   const [isSearching, setIsSearching] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   
+  const [isEditing, setIsEditing] = useState(false);
+  const [showNameEditPopup, setShowNameEditPopup] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editImg, setEditImg] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const directFileInputRef = useRef<HTMLInputElement>(null);
+
   const playTrack = usePlayerStore((state) => state.playTrack);
   const showToast = usePlayerStore((state) => state.showToast);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('Gambar terlalu besar. Maksimum 2MB.', 'error');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setEditImg(event.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDirectFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('Gambar terlalu besar. Maksimum 2MB.', 'error');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        if (event.target?.result && playlist) {
+          try {
+            const base64 = event.target.result as string;
+            const updatedPlaylist = {
+              ...playlist,
+              img: base64
+            };
+            await db.addPlaylist(updatedPlaylist);
+            setPlaylist(updatedPlaylist);
+            showToast('Cover playlist berhasil diperbarui');
+          } catch (err) {
+            console.error(err);
+            showToast('Gagal mengubah cover', 'error');
+          }
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSaveEdit = async (newName: string, newImg: string) => {
+    if (!playlist) return;
+    const name = newName.trim();
+    if (!name) return;
+
+    try {
+      const updatedPlaylist = {
+        ...playlist,
+        name,
+        img: newImg || playlist.img
+      };
+      await db.addPlaylist(updatedPlaylist);
+      setPlaylist(updatedPlaylist);
+      setIsEditing(false);
+      showToast('Playlist berhasil diperbarui');
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal menyimpan perubahan', 'error');
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -216,7 +290,12 @@ export default function PlaylistPage() {
   const isSelfCreated = /^\d+$/.test(playlist.id);
 
   return (
-    <main className="min-h-screen pb-20">
+    <motion.main 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
+      className="min-h-screen pb-20"
+    >
       <div className={`sticky top-0 z-20 transition-all duration-300 px-4 py-4 flex items-center justify-between ${
         isScrolled ? 'bg-black/45 backdrop-blur-md' : 'bg-transparent'
       }`}>
@@ -267,15 +346,48 @@ export default function PlaylistPage() {
       </div>
 
       <div className="px-4 pt-4 pb-8 flex flex-col items-center text-center">
-        <div className="w-48 h-48 sm:w-64 sm:h-64 rounded-2xl overflow-hidden shadow-2xl mb-6 relative bg-white/5 flex items-center justify-center">
+        <div 
+          onClick={isSelfCreated && isSaved ? () => directFileInputRef.current?.click() : undefined}
+          className={`w-48 h-48 sm:w-64 sm:h-64 rounded-2xl overflow-hidden shadow-2xl mb-6 relative bg-white/5 flex items-center justify-center group ${
+            isSelfCreated && isSaved ? 'cursor-pointer' : ''
+          }`}
+        >
           {playlist.img ? (
-            <ImageWithFallback src={getHighResImage(playlist.img, 800)} alt={playlist.name} fill sizes="(max-width: 640px) 100vw, 300px" className="object-cover" />
+            <ImageWithFallback src={getHighResImage(playlist.img, 800)} alt={playlist.name} fill sizes="(max-width: 640px) 100vw, 300px" className="object-cover group-hover:scale-105 transition-transform duration-300" />
           ) : (
             <Music className="w-20 h-20 text-white/20" />
           )}
+          {isSelfCreated && isSaved && (
+            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white/90 gap-1.5 transition-all duration-300 backdrop-blur-[2px]">
+              <Camera className="w-7 h-7" />
+              <span className="text-[10px] font-bold tracking-wider">UBAH COVER</span>
+            </div>
+          )}
         </div>
-        <div className="w-full max-w-sm mb-2">
-          <MarqueeText text={playlist.name} className="text-2xl sm:text-3xl font-bold text-white text-center" />
+        {isSelfCreated && isSaved && (
+          <input 
+            type="file"
+            ref={directFileInputRef}
+            onChange={handleDirectFileChange}
+            accept="image/*"
+            className="hidden"
+          />
+        )}
+        <div 
+          onClick={isSelfCreated && isSaved ? () => {
+            setEditName(playlist.name);
+            setShowNameEditPopup(true);
+          } : undefined}
+          className={`w-full max-w-sm mb-2 group ${
+            isSelfCreated && isSaved ? 'cursor-pointer' : ''
+          }`}
+        >
+          <div className="relative flex items-center justify-center gap-2">
+            <MarqueeText text={playlist.name} className="text-2xl sm:text-3xl font-bold text-white text-center group-hover:text-[#FA243C] transition-colors" />
+            {isSelfCreated && isSaved && (
+              <Edit2 className="w-4 h-4 text-white/30 group-hover:text-[#FA243C] opacity-0 group-hover:opacity-100 transition-all shrink-0" />
+            )}
+          </div>
         </div>
         <p className="text-white/50 mb-6">{playlist.tracks.length} lagu</p>
 
@@ -304,13 +416,26 @@ export default function PlaylistPage() {
             </button>
           )}
           {isSelfCreated && isSaved && (
-            <button 
-              onClick={handleDeletePlaylist}
-              className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center hover:bg-red-500/20 hover:text-red-500 transition-colors"
-              title="Hapus Playlist"
-            >
-              <Trash2 className="w-6 h-6" />
-            </button>
+            <>
+              <button 
+                onClick={() => {
+                  setEditName(playlist.name);
+                  setEditImg(playlist.img);
+                  setIsEditing(true);
+                }}
+                className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+                title="Edit Playlist"
+              >
+                <Edit2 className="w-6 h-6 text-white" />
+              </button>
+              <button 
+                onClick={handleDeletePlaylist}
+                className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center hover:bg-red-500/20 hover:text-red-500 transition-colors"
+                title="Hapus Playlist"
+              >
+                <Trash2 className="w-6 h-6" />
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -467,7 +592,169 @@ export default function PlaylistPage() {
             </motion.div>
           </div>
         )}
+
+        {isEditing && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsEditing(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-md"
+            />
+
+            {/* Modal Content */}
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+              className="relative z-10 w-full max-w-sm bg-[#121214]/90 backdrop-blur-2xl rounded-[2.5rem] p-6 border border-white/10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] text-center"
+            >
+              {/* Close Button */}
+              <button 
+                onClick={() => setIsEditing(false)}
+                className="absolute top-5 right-5 text-white/40 hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <span className="text-[9px] font-black tracking-[0.25em] uppercase mb-4 block text-[#FA243C]">
+                Edit Playlist
+              </span>
+
+              {/* Cover Image Upload Area */}
+              <div className="relative w-40 h-40 mx-auto mb-6 group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                <div className="w-full h-full rounded-2xl overflow-hidden relative shadow-lg ring-1 ring-white/10 bg-white/5">
+                  {editImg ? (
+                    <img src={editImg} alt="Playlist Cover Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Music className="w-12 h-12 text-white/20" />
+                    </div>
+                  )}
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white/90 gap-1.5 transition-all">
+                    <Camera className="w-6 h-6" />
+                    <span className="text-[10px] font-bold tracking-wider">UBAH COVER</span>
+                  </div>
+                </div>
+                {/* Hidden File Input */}
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleFileChange} 
+                  accept="image/*" 
+                  className="hidden" 
+                />
+              </div>
+
+              {/* Title Input */}
+              <div className="space-y-1.5 text-left mb-6">
+                <label className="text-[10px] font-bold text-white/40 tracking-wider uppercase pl-2">Nama Playlist</label>
+                <input 
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  placeholder="Masukkan nama playlist..."
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 px-5 text-white text-sm focus:outline-none focus:border-[#FA243C]/50 transition-all font-semibold"
+                />
+              </div>
+
+              {/* Save & Cancel Buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="flex-1 py-3.5 bg-white/5 hover:bg-white/10 text-white rounded-2xl font-bold transition-all text-sm"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={() => handleSaveEdit(editName, editImg)}
+                  disabled={!editName.trim()}
+                  className="flex-1 py-3.5 bg-[#FA243C] hover:bg-[#D81E33] text-white rounded-2xl font-bold transition-all disabled:opacity-40 text-sm shadow-[0_8px_25px_rgba(250,36,60,0.3)]"
+                >
+                  Simpan
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {showNameEditPopup && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowNameEditPopup(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-md"
+            />
+
+            {/* Modal Content */}
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+              className="relative z-10 w-full max-w-sm bg-[#121214]/90 backdrop-blur-2xl rounded-[2.5rem] p-6 border border-white/10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] text-center"
+            >
+              {/* Close Button */}
+              <button 
+                onClick={() => setShowNameEditPopup(false)}
+                className="absolute top-5 right-5 text-white/40 hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <span className="text-[9px] font-black tracking-[0.25em] uppercase mb-4 block text-[#FA243C]">
+                Ubah Nama Playlist
+              </span>
+
+              {/* Title Input */}
+              <div className="space-y-1.5 text-left mb-6">
+                <label className="text-[10px] font-bold text-white/40 tracking-wider uppercase pl-2">Nama Playlist</label>
+                <input 
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  placeholder="Masukkan nama playlist baru..."
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 px-5 text-white text-sm focus:outline-none focus:border-[#FA243C]/50 transition-all font-semibold"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && editName.trim()) {
+                      handleSaveEdit(editName, playlist.img);
+                      setShowNameEditPopup(false);
+                    }
+                  }}
+                />
+              </div>
+
+              {/* Save & Cancel Buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowNameEditPopup(false)}
+                  className="flex-1 py-3.5 bg-white/5 hover:bg-white/10 text-white rounded-2xl font-bold transition-all text-sm"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={() => {
+                    handleSaveEdit(editName, playlist.img);
+                    setShowNameEditPopup(false);
+                  }}
+                  disabled={!editName.trim()}
+                  className="flex-1 py-3.5 bg-[#FA243C] hover:bg-[#D81E33] text-white rounded-2xl font-bold transition-all disabled:opacity-40 text-sm shadow-[0_8px_25px_rgba(250,36,60,0.3)]"
+                >
+                  Simpan
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </AnimatePresence>
-    </main>
+    </motion.main>
   );
 }

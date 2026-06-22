@@ -11,6 +11,7 @@ import { ImageWithFallback } from './ImageWithFallback';
 import { useRouter } from 'next/navigation';
 
 import { MarqueeText } from './MarqueeText';
+import { LovePopup } from './LovePopup';
 
 import { useHasMounted } from '@/hooks/useHasMounted';
 
@@ -38,6 +39,7 @@ export function Player() {
   const trackToAdd = usePlayerStore((state) => state.trackToAdd);
 
   const [isLiked, setIsLiked] = useState(false);
+  const [showLovePopup, setShowLovePopup] = useState(false);
   const [lyrics, setLyrics] = useState<{ text: string }[] | null>(null);
   const [syncedLyrics, setSyncedLyrics] = useState<{ time: number; text: string }[] | null>(null);
   const [showLyrics, setShowLyrics] = useState(false);
@@ -283,24 +285,19 @@ export function Player() {
     };
   }, [isExpanded]);
 
-  const handleLike = useCallback(async (e?: React.MouseEvent) => {
+  const handleLike = useCallback((e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (!currentTrack) return;
-    try {
-      if (isLiked) {
-        await db.removeLikedSong(currentTrack.videoId);
-        setIsLiked(false);
-        usePlayerStore.getState().showToast('Dihapus dari Lagu yang Disukai', 'success');
-      } else {
-        await db.addLikedSong(currentTrack);
-        setIsLiked(true);
-        usePlayerStore.getState().showToast('Ditambahkan ke Lagu yang Disukai', 'success');
-      }
-    } catch (err) {
-      console.error(err);
-      usePlayerStore.getState().showToast('Gagal mengubah status suka', 'error');
+    setShowLovePopup(true);
+  }, [currentTrack]);
+
+  const handleLovePopupClose = useCallback(() => {
+    setShowLovePopup(false);
+    // Re-check liked status after popup closes
+    if (currentTrack) {
+      db.isLiked(currentTrack.videoId).then(setIsLiked);
     }
-  }, [currentTrack, isLiked]);
+  }, [currentTrack]);
 
   const handleAddToPlaylist = useCallback((e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -1306,6 +1303,13 @@ export function Player() {
         )}
       </AnimatePresence>
 
+      {/* Love Popup */}
+      {showLovePopup && currentTrack && (
+        <LovePopup
+          track={currentTrack}
+          onClose={handleLovePopupClose}
+        />
+      )}
     </>
   );
 }

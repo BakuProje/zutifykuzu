@@ -8,6 +8,7 @@ import { ArtistItem } from '@/components/ArtistItem';
 import { Search as SearchIcon, Loader2, ArrowLeft, X, ArrowUpLeft, History } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 import { SearchSkeleton } from '@/components/SearchSkeleton';
 
@@ -85,7 +86,12 @@ export default function Search() {
   };
 
   return (
-    <main className="min-h-screen pt-6 pb-24">
+    <motion.main 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
+      className="min-h-screen pt-6 pb-24"
+    >
       <div className="px-4 mb-4 flex items-center gap-3">
         <button onClick={() => router.back()} className="text-white hover:bg-white/10 p-2 rounded-full transition-colors">
           <ArrowLeft className="w-6 h-6" />
@@ -118,17 +124,27 @@ export default function Search() {
 
       <div className="flex overflow-x-auto no-scrollbar gap-3 mb-6 px-4 snap-x snap-mandatory scroll-smooth">
         {tabs.map((tab) => (
-          <button
+          <motion.button
             key={tab}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setActiveTab(tab)}
-            className={`whitespace-nowrap px-5 py-2 rounded-full text-sm font-medium transition-colors border snap-center ${
-              activeTab === tab 
-                ? 'bg-[#FA243C] text-white border-[#FA243C]' 
-                : 'bg-transparent text-white/70 border-white/10 hover:bg-white/5'
-            }`}
+            className="relative whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-semibold transition-colors snap-center outline-none"
           >
-            {tab}
-          </button>
+            {activeTab === tab && (
+              <motion.div
+                layoutId="activeSearchTab"
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                className="absolute inset-0 bg-[#FA243C] rounded-full shadow-lg shadow-[#FA243C]/20"
+              />
+            )}
+            <span className={cn(
+              "relative z-10 transition-colors duration-300",
+              activeTab === tab ? "text-white" : "text-white/60 hover:text-white"
+            )}>
+              {tab}
+            </span>
+          </motion.button>
         ))}
       </div>
 
@@ -220,6 +236,6 @@ export default function Search() {
           </div>
         ) : null}
       </div>
-    </main>
+    </motion.main>
   );
 }
