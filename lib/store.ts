@@ -31,6 +31,12 @@ export interface Toast {
   type: 'success' | 'error' | 'info';
 }
 
+export interface TrackMenuState {
+  track: Track;
+  onRemove?: () => void;
+  onDownload?: () => void;
+}
+
 interface PlayerState {
   currentTrack: Track | null;
   queue: Track[];
@@ -42,6 +48,7 @@ interface PlayerState {
   duration: number;
   playContext: 'playlist' | 'similar';
   trackToAdd: Track | null;
+  trackMenu: TrackMenuState | null;
   history: HistoryItem[];
   playCounts: Record<string, number>;
   dominantColor: string | null;
@@ -63,6 +70,7 @@ interface PlayerState {
   setVolume: (volume: number) => void;
   addToQueue: (track: Track) => void;
   setTrackToAdd: (track: Track | null) => void;
+  setTrackMenu: (menu: TrackMenuState | null) => void;
   setDominantColor: (color: string | null) => void;
   setHomeData: (data: HomeData) => void;
   toggleShuffle: () => void;
@@ -83,6 +91,7 @@ export const usePlayerStore = create<PlayerState>()(
       duration: 0,
       playContext: 'similar',
       trackToAdd: null,
+      trackMenu: null,
       history: [],
       playCounts: {},
       dominantColor: null,
@@ -318,6 +327,7 @@ export const usePlayerStore = create<PlayerState>()(
         } : null;
         set({ trackToAdd: track });
       },
+      setTrackMenu: (menu) => set({ trackMenu: menu }),
       setDominantColor: (color) => set({ dominantColor: color }),
       setHomeData: (data) => set({ homeData: data }),
       toggleShuffle: () => {

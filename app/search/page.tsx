@@ -93,9 +93,6 @@ export default function Search() {
       className="min-h-screen pt-6 pb-24"
     >
       <div className="px-4 mb-4 flex items-center gap-3">
-        <button onClick={() => router.back()} className="text-white hover:bg-white/10 p-2 rounded-full transition-colors">
-          <ArrowLeft className="w-6 h-6" />
-        </button>
         <form onSubmit={onSubmit} className="relative flex-1">
           <input
             type="text"

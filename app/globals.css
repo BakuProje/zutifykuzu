@@ -69,23 +69,14 @@ animation: marquee 15s linear infinite;
 }
 }
 
-/* Custom Scrollbar for desktop */
+/* Hide scrollbar globally */
 ::-webkit-scrollbar {
-width: 6px;
-height: 6px;
+  display: none;
 }
 
-::-webkit-scrollbar-track {
-background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-background: rgba(255, 255, 255, 0.1);
-border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-background: rgba(255, 255, 255, 0.2);
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 /* Karaoke timed lyrics styles */

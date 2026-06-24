@@ -874,7 +874,7 @@ export function Player() {
       audioRef.current.currentTime = newTime;
     }
   };
-  if (!hasMounted || !currentTrack) return null;
+  if (!hasMounted) return null;
 
   return (
     <>
@@ -886,19 +886,22 @@ export function Player() {
             animate={{ y: 0, opacity: 1, x: '-50%' }}
             exit={{ y: 50, opacity: 0, x: '-50%' }}
             className={cn(
-              "fixed bottom-32 left-1/2 z-[200] px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border backdrop-blur-md",
+              "fixed bottom-32 left-1/2 z-[200] px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border backdrop-blur-md whitespace-nowrap",
               toast.type === 'success' && "bg-[#FA243C]/10 border-[#FA243C]/20 text-white",
               toast.type === 'error' && "bg-[#FA243C]/20 border-[#FA243C]/30 text-white",
               toast.type === 'info' && "bg-white/5 border-white/10 text-white"
             )}
           >
-            <span className="font-bold text-sm">{toast.message}</span>
+            <span className="font-bold text-sm whitespace-nowrap">{toast.message}</span>
           </motion.div>
         )}
       </AnimatePresence>
-      {/* Hidden YouTube Player and PiP Helpers */}
-      <div className="fixed top-[-1000px] left-[-1000px] w-[1px] h-[1px] opacity-0 pointer-events-none">
-        {(!isLocal && currentTrack?.videoId && !currentTrack.videoId.startsWith('local-')) && (
+
+      {currentTrack && (
+        <>
+          {/* Hidden YouTube Player and PiP Helpers */}
+          <div className="fixed top-[-1000px] left-[-1000px] w-[1px] h-[1px] opacity-0 pointer-events-none">
+            {(!isLocal && currentTrack?.videoId && !currentTrack.videoId.startsWith('local-')) && (
           <YouTube
             key={currentTrack.videoId}
             videoId={currentTrack.videoId}
@@ -1309,6 +1312,8 @@ export function Player() {
           track={currentTrack}
           onClose={handleLovePopupClose}
         />
+      )}
+        </>
       )}
     </>
   );

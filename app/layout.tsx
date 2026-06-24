@@ -3,6 +3,7 @@ import './globals.css'; // Global styles
 import { BottomNav } from '@/components/BottomNav';
 import { Player } from '@/components/Player';
 import { AddToPlaylistModal } from '@/components/AddToPlaylistModal';
+import { TrackMenuBottomSheet } from '@/components/TrackMenuBottomSheet';
 import { PWARegister } from '@/components/PWARegister';
 import { BackgroundProvider } from '@/components/BackgroundProvider';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -67,6 +68,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
           <Player />
           <BottomNav />
           <AddToPlaylistModal />
+          <TrackMenuBottomSheet />
         </ErrorBoundary>
       </body>
     </html>

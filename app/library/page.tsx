@@ -625,13 +625,10 @@ export default function Library() {
               <button
                 onClick={handleImport}
                 disabled={!importUrl.trim() || isImporting}
-                className="py-4 rounded-2xl font-bold bg-[#FA243C] text-white hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-all shadow-[0_10px_20px_rgba(250,36,60,0.3)] flex items-center justify-center gap-2"
+                className="py-4 rounded-2xl font-bold bg-[#FA243C] text-white hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-all shadow-[0_10px_20px_rgba(250,36,60,0.3)] flex items-center justify-center"
               >
                 {isImporting ? (
-                  <>
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Mengimpor...</span>
-                  </>
+                  <span>Mengimpor...</span>
                 ) : (
                   <span>Impor</span>
                 )}
